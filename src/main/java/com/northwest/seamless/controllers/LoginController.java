@@ -1,6 +1,7 @@
 package com.northwest.seamless.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,13 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok().body(loginService.login(request));
+    }
+
+    @PostMapping ("/logout")
+    public  ResponseEntity<ApiResponse<String>> logout(){
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok().body(ApiResponse.success("Logged out successfully"));
     }
 
 }

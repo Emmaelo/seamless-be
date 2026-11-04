@@ -32,9 +32,7 @@ public class UserRequest {
     private String taxIdentificationNumber;
     private String pfaAdministrator;
     private String rsaNumber;
-    private String managerId;
-    private String managerName;
-
+   
     private String maidenName;
     private String maritalStatus;
     private String religion;
@@ -46,7 +44,7 @@ public class UserRequest {
     private String ethnicity;
     private String alternatePhoneNumber;
     private String alternateEmail;
-    private String LGA;
+    private String lga;
     private String stateOfOrigin;
     private String nationality;
     private String residenceAddress;

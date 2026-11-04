@@ -22,6 +22,7 @@ import com.northwest.seamless.entity.hris.Departments;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
 import com.northwest.seamless.enumeration.AccessRoles;
 import com.northwest.seamless.enumeration.ReviewStatus;
+import com.northwest.seamless.exceptions.ApplicationException;
 import com.northwest.seamless.repository.AppraisalCycleRepository;
 import com.northwest.seamless.repository.DepartmentRepository;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
@@ -60,7 +61,7 @@ public class AdminImpl implements AdminService {
                                 .ethnicity(request.getEthnicity())
                                 .alternatePhoneNumber(request.getAlternatePhoneNumber())
                                 .alternateEmail(request.getAlternateEmail())
-                                .LGA(request.getLGA())
+                                .LGA(request.getLga())
                                 .stateOfOrigin(request.getStateOfOrigin())
                                 .nationality(request.getNationality())
                                 .residenceAddress(request.getResidenceAddress())
@@ -101,6 +102,9 @@ public class AdminImpl implements AdminService {
                                 .grossSalary(request.getGrossSalary())
                                 .build();
 
+
+                EmployeeEntity manager =  getEntity(request.getDepartment());                
+
                 EmployeeEntity user = EmployeeEntity.builder()
                                 .staffId(request.getStaffId())
                                 .personalEmail(request.getPersonalEmail())
@@ -124,8 +128,9 @@ public class AdminImpl implements AdminService {
                                 .taxIdentificationNumber(request.getTaxIdentificationNumber())
                                 .pfaAdministrator(request.getPfaAdministrator())
                                 .rsaNumber(request.getRsaNumber())
-                                .managerId(request.getManagerId())
-                                .managerName(request.getManagerName())
+
+                                .managerId(manager.getStaffId())
+                                .managerName(manager == null ? null : manager.getFirstName() + " " + manager.getLastName())
 
                                 .kysEntity(kys)
                                 .salaryEntity(salary)
@@ -191,13 +196,25 @@ public class AdminImpl implements AdminService {
 
         private String getId(String department, String identifier) {
                 Departments dept = departmentRepository.findByDepartment(department)
-                                .orElseThrow(() -> new RuntimeException(
+                                .orElseThrow(() -> new ApplicationException(
                                                 "Department not found: " + department));
 
                 if ("hod".equalsIgnoreCase(identifier)) {
                         return dept.getHodStaffId();
                 }
                 return dept.getLineManagerStaffId();
+
+        }
+
+        private EmployeeEntity getEntity(String department){
+                Departments dept = departmentRepository.findByDepartment(department)
+                                .orElseThrow(() -> new ApplicationException(
+                                                "Department not found: " + department));
+        
+                EmployeeEntity employeeEntity = employeeRepository.findByStaffId(dept.getLineManagerStaffId()).orElse(new EmployeeEntity());
+
+                return employeeEntity;
+
 
         }
 

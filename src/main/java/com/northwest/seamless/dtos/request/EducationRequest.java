@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class EducationRequest {
-        private String universityAttended;
+    private String universityAttended;
     private String degreeObtained;
     private String courseOfStudy;
     private String yearOfGraduation;

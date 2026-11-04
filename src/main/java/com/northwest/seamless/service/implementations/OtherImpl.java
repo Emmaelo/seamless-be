@@ -10,14 +10,20 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.CelebrationResponse;
 import com.northwest.seamless.dtos.response.EmployeeResponse;
+import com.northwest.seamless.entity.hris.Departments;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
+import com.northwest.seamless.entity.hris.PayGrades;
 import com.northwest.seamless.exceptions.ApplicationException;
+import com.northwest.seamless.repository.DepartmentRepository;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
+import com.northwest.seamless.repository.PayGradesRepository;
 import com.northwest.seamless.service.interfaces.OtherService;
 import com.northwest.seamless.utils.EmployeeSpecification;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +33,12 @@ import lombok.RequiredArgsConstructor;
 public class OtherImpl implements OtherService {
 
     private final EmployeeEntityRepository employeeEntityRepository;
+    private final DepartmentRepository departmentRepository;
+    private final PayGradesRepository payGradesRepository;
 
     public ApiResponse<List<EmployeeResponse>> findEmployeeDetails() {
 
-        List<EmployeeEntity> employeeEntities = employeeEntityRepository.findByConfirmedAndStatus(true, true);
+        List<EmployeeEntity> employeeEntities = employeeEntityRepository.findByStatus( true);
 
         List<EmployeeResponse> listOfResponse = new ArrayList<>();
 
@@ -195,7 +203,7 @@ public class OtherImpl implements OtherService {
             };
 
             default -> throw new ApplicationException(
-                    "Invalid celebration period" );
+                    "Invalid celebration period");
         };
     }
 
@@ -229,6 +237,16 @@ public class OtherImpl implements OtherService {
         }
 
         return null;
+    }
+
+    public ApiResponse<List<Departments>> getDepartments() {
+        List<Departments> listOfDepartments = departmentRepository.findAll();
+        return ApiResponse.success("success", listOfDepartments);
+    }
+
+    public ApiResponse<List<PayGrades>> getPayGrades() {
+        List<PayGrades> listOfpPayGrades = payGradesRepository.findAll(Sort.by("payGrade").ascending());
+        return ApiResponse.success("success", listOfpPayGrades);
     }
 
 }

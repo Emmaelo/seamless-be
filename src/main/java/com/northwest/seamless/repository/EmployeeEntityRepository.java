@@ -15,5 +15,6 @@ public interface EmployeeEntityRepository extends JpaRepository<EmployeeEntity, 
     Optional<EmployeeEntity> findByWorkEmail(String workEmail);
     boolean existsByWorkEmailOrPersonalEmail(String email, String personalEmail);
     List<EmployeeEntity> findByConfirmedAndStatus(boolean confirmed, boolean status);
+    List<EmployeeEntity> findByStatus(boolean status);
     
 }

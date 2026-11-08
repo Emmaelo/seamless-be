@@ -231,8 +231,8 @@ public class OtherImpl implements OtherService {
                 }
 
             } catch (DateTimeException exception) {
-                // For example, February 29 in a non-leap year.
-                // Such a date is skipped.
+            
+                throw new ApplicationException("DateTime Exception thrown");
             }
         }
 

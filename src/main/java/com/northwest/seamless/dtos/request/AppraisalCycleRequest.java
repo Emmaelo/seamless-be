@@ -13,4 +13,6 @@ public class AppraisalCycleRequest {
 
     private LocalDate endDate;
 
+    private String appraisalYear;
+
 }

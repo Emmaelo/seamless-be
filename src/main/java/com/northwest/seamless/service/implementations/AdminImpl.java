@@ -151,7 +151,7 @@ public class AdminImpl implements AdminService {
                         AppraisalCycleRequest request) {
 
                 if (appraisalCycleRepository.existsByAppraisalYear(
-                                Year.now().toString())) {
+                                request.getAppraisalYear())) {
                         return ApiResponse.error("Appraisal Year already exists");
                 }
 
@@ -162,7 +162,7 @@ public class AdminImpl implements AdminService {
                                 .createdAt(LocalDateTime.now())
                                 .startDate(request.getStartDate())
                                 .endDate(request.getEndDate())
-                                .appraisalYear(Year.now().toString())
+                                .appraisalYear(request.getAppraisalYear())
                                 .build();
 
                 cycle = appraisalCycleRepository.save(cycle);
@@ -177,7 +177,7 @@ public class AdminImpl implements AdminService {
                                         .staffId(employee.getStaffId())
                                         .reviewerId(getId(employee.getDepartment(), "line"))
                                         .counterSignersId(getId(employee.getDepartment(), "hod"))
-                                        .appraisalYear(Year.now().toString())
+                                        .appraisalYear(request.getAppraisalYear())
                                         .status(ReviewStatus.CREATED)
                                         .appraisalCycle(cycle)
                                         .build();

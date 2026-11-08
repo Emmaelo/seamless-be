@@ -2,7 +2,8 @@ package com.northwest.seamless;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,10 +28,16 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
         description = "Provide JWT token. Example: `eyJhbGci...`"
 )
 @SpringBootApplication
-public class SeamlessApplication {
+public class SeamlessApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SeamlessApplication.class, args);
 	}
+
+        @Override
+        protected SpringApplicationBuilder configure(SpringApplicationBuilder applicationBuilder){
+                return applicationBuilder.sources(SeamlessApplication.class);
+
+        }
 
 }

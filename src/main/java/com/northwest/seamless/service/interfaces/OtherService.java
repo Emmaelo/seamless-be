@@ -9,7 +9,7 @@ import com.northwest.seamless.entity.hris.PayGrades;
 
 
 public interface OtherService {
-    ApiResponse<List<EmployeeResponse>> findEmployeeDetails();
+    ApiResponse<List<EmployeeResponse>> findEmployeeDetails(boolean isActive);
     ApiResponse<List<CelebrationResponse>> findCelebrations(String type, String period); 
     ApiResponse<List<Departments>> getDepartments();
     ApiResponse<List<PayGrades>> getPayGrades();

@@ -15,5 +15,6 @@ public class EmployeeResponse {
     private String gender;
     private String department;
     private String location;
+    private String staffId;
 
 }

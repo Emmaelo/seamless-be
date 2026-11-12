@@ -1,7 +1,6 @@
 package com.northwest.seamless.service.implementations;
 
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -177,6 +176,8 @@ public class AdminImpl implements AdminService {
                                         .staffId(employee.getStaffId())
                                         .reviewerId(getId(employee.getDepartment(), "line"))
                                         .counterSignersId(getId(employee.getDepartment(), "hod"))
+                                        .startDate(request.getStartDate())
+                                        .endDate(request.getEndDate())
                                         .appraisalYear(request.getAppraisalYear())
                                         .status(ReviewStatus.CREATED)
                                         .appraisalCycle(cycle)

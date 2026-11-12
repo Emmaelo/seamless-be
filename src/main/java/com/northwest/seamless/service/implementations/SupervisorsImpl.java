@@ -11,6 +11,7 @@ import java.util.Set;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.northwest.seamless.dtos.request.CounterSignRequest;
 import com.northwest.seamless.dtos.request.ReviewerAppraisalRequest;
@@ -102,6 +103,7 @@ public class SupervisorsImpl implements SupervisorService {
     }
 
 
+    @Transactional 
     public ApiResponse<String> appraiseStaff(ReviewerRequest request) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();

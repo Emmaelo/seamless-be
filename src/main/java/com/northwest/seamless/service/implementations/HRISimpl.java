@@ -3,20 +3,17 @@ package com.northwest.seamless.service.implementations;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.HRISOverviewResponse;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
 import com.northwest.seamless.service.interfaces.HRISService;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class HRISimpl implements  HRISService{
+public class HRISimpl implements HRISService {
         private final EmployeeEntityRepository employeeEntityRepository;
 
         public ApiResponse<HRISOverviewResponse> getHrisOverviewPageResponses() {
@@ -56,6 +53,25 @@ public class HRISimpl implements  HRISService{
                 response.setEmployeeAverageAge((int) Math.round(averageAge));
                 response.setEmployeeAverageLOS((int) Math.round(averageLOS));
 
-                return ApiResponse.success("success",response);
+                return ApiResponse.success("success", response);
+        }
+
+        public ApiResponse<String> activateDeactivateEmployee(String action, String staffId) {
+
+                EmployeeEntity employeeEntity = employeeEntityRepository.findByStaffId(staffId).orElse(null);
+                if (employeeEntity == null) {
+                        return ApiResponse.error("Employee ID not found");
+                }
+
+                if ("deactivate".equals(action)) {
+                        employeeEntity.setStatus(false);
+                        employeeEntityRepository.save(employeeEntity);
+                        return ApiResponse.success("Employee with staff Id : " + staffId + " has been deactivated");
+                }
+                employeeEntity.setStatus(true);
+
+                employeeEntityRepository.save(employeeEntity);
+                return ApiResponse.success("Employee with staff Id : " + staffId + " has been activated");
+
         }
 }

@@ -1,11 +1,10 @@
 package com.northwest.seamless.entity.appraisal;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.northwest.seamless.enumeration.ReviewStatus;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,6 +64,10 @@ public class PerformanceReview {
     private int employeeFinalScore;
 
     private int supervisorFinalScore;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "appraisal_cycle_id", nullable = false)

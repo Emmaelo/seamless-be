@@ -36,9 +36,17 @@ public class OtherImpl implements OtherService {
     private final DepartmentRepository departmentRepository;
     private final PayGradesRepository payGradesRepository;
 
-    public ApiResponse<List<EmployeeResponse>> findEmployeeDetails() {
+    public ApiResponse<List<EmployeeResponse>> findEmployeeDetails(boolean isActive) {
 
-        List<EmployeeEntity> employeeEntities = employeeEntityRepository.findByStatus( true);
+        List<EmployeeEntity> employeeEntities ;
+
+        if(isActive){
+            employeeEntities = employeeEntityRepository.findByStatus( true);
+
+        }else{
+            employeeEntities = employeeEntityRepository.findByStatus(false);
+
+        }
 
         List<EmployeeResponse> listOfResponse = new ArrayList<>();
 
@@ -53,6 +61,7 @@ public class OtherImpl implements OtherService {
             response.setGender(em.getGender());
             response.setDepartment(em.getDepartment());
             response.setLocation(em.getLocation());
+            response.setStaffId(em.getStaffId());
             response.setWorkAnniversary(formatWorkAnniversary(em.getDateOfEmployment()));
 
             listOfResponse.add(response);

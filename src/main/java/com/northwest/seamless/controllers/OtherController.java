@@ -22,9 +22,10 @@ public class OtherController {
     private final OtherService otherService;
 
     @GetMapping("/get-employees")
-    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> findEmployeeDetails() {
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> findEmployeeDetails(
+            @RequestParam(defaultValue = "true") boolean isActive) {
 
-        return ResponseEntity.ok().body(otherService.findEmployeeDetails());
+        return ResponseEntity.ok().body(otherService.findEmployeeDetails(isActive));
 
     }
 
@@ -45,5 +46,4 @@ public class OtherController {
         return ResponseEntity.ok().body(otherService.getPayGrades());
     }
 
- 
 }

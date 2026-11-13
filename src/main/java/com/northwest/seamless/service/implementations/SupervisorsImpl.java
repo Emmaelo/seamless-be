@@ -22,6 +22,7 @@ import com.northwest.seamless.entity.appraisal.Objectives;
 import com.northwest.seamless.entity.appraisal.PerformanceReview;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
 import com.northwest.seamless.enumeration.ReviewStatus;
+import com.northwest.seamless.enumeration.Suggestion;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
 import com.northwest.seamless.repository.PerformanceReviewRepository;
 import com.northwest.seamless.service.interfaces.SupervisorService;
@@ -177,7 +178,7 @@ public class SupervisorsImpl implements SupervisorService {
         performanceReview.setStatus(ReviewStatus.REVIEWED);
         performanceReview.setReviewerComment(request.getReviewerComment());
         performanceReview.setReviewedAt(LocalDateTime.now());
-        performanceReview.setReviewerSuggestion(request.getSuggestion());
+        performanceReview.setReviewerSuggestion(Suggestion.valueOf(request.getSuggestion()));
 
         performanceReviewRepository.save(performanceReview);
 
@@ -212,7 +213,7 @@ public class SupervisorsImpl implements SupervisorService {
 
         performanceReview.setStatus(ReviewStatus.COMPLETED);
         performanceReview.setCounterSignedAt(LocalDateTime.now());
-        performanceReview.setCounterSignerSuggestion(request.getSuggestion());
+        performanceReview.setCounterSignerSuggestion(Suggestion.valueOf(request.getSuggestion()));
         performanceReview.setCounterSignersComment(request.getComment());
 
         performanceReviewRepository.save(performanceReview);

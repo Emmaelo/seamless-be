@@ -1,5 +1,6 @@
 package com.northwest.seamless.service.implementations;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -101,8 +102,7 @@ public class AdminImpl implements AdminService {
                                 .grossSalary(request.getGrossSalary())
                                 .build();
 
-
-                EmployeeEntity manager =  getEntity(request.getDepartment());                
+                EmployeeEntity manager = getEntity(request.getDepartment());
 
                 EmployeeEntity user = EmployeeEntity.builder()
                                 .staffId(request.getStaffId())
@@ -129,7 +129,8 @@ public class AdminImpl implements AdminService {
                                 .rsaNumber(request.getRsaNumber())
 
                                 .managerId(manager.getStaffId())
-                                .managerName(manager == null ? null : manager.getFirstName() + " " + manager.getLastName())
+                                .managerName(manager == null ? null
+                                                : manager.getFirstName() + " " + manager.getLastName())
 
                                 .kysEntity(kys)
                                 .salaryEntity(salary)
@@ -166,7 +167,7 @@ public class AdminImpl implements AdminService {
 
                 cycle = appraisalCycleRepository.save(cycle);
 
-                List<EmployeeEntity> employees = employeeRepository.findByConfirmedAndStatus(true,true);
+                List<EmployeeEntity> employees = employeeRepository.findByConfirmedAndStatus(true, true);
 
                 List<PerformanceReview> reviews = new ArrayList<>();
 
@@ -181,6 +182,7 @@ public class AdminImpl implements AdminService {
                                         .appraisalYear(request.getAppraisalYear())
                                         .status(ReviewStatus.CREATED)
                                         .appraisalCycle(cycle)
+                                        .name(employee.getLastName() + " " + employee.getLastName())
                                         .build();
 
                         reviews.add(review);
@@ -207,16 +209,57 @@ public class AdminImpl implements AdminService {
 
         }
 
-        private EmployeeEntity getEntity(String department){
+        private EmployeeEntity getEntity(String department) {
                 Departments dept = departmentRepository.findByDepartment(department)
                                 .orElseThrow(() -> new ApplicationException(
                                                 "Department not found: " + department));
-        
-                EmployeeEntity employeeEntity = employeeRepository.findByStaffId(dept.getLineManagerStaffId()).orElse(new EmployeeEntity());
+
+                EmployeeEntity employeeEntity = employeeRepository.findByStaffId(dept.getLineManagerStaffId())
+                                .orElse(new EmployeeEntity());
 
                 return employeeEntity;
 
+        }
 
+        @Transactional
+        public ApiResponse<String> deleteAppraisalCycle(String year) {
+                AppraisalCycle appraisalCycle = appraisalCycleRepository.findByAppraisalYear(year).orElse(null);
+
+                if (appraisalCycle == null) {
+                        return ApiResponse.error("Appraisal Cycle not found");
+                }
+
+                if (!appraisalCycle.isActive()) {
+                        return ApiResponse.error("Cycle already ended. Cannot be deleted");
+                }
+
+                appraisalCycleRepository.delete(appraisalCycle);
+
+                return ApiResponse.success("Cycle deleted successfuly");
+
+        }
+
+        public ApiResponse<String> editAppraisalCycle(String year, LocalDate endDate) {
+
+                AppraisalCycle appraisalCycle = appraisalCycleRepository.findByAppraisalYear(year)
+                                .orElse(null);
+                if (appraisalCycle == null) {
+                        return ApiResponse.error("Appraisal year not found");
+                }
+
+                if(!appraisalCycle.isActive()){
+                        return ApiResponse.error("Appraisal ended. Cannot modify");
+                }
+
+                for(PerformanceReview pr : appraisalCycle.getPerformanceReviews()){
+                        pr.setEndDate(endDate);
+                }
+
+                appraisalCycle.setEndDate(endDate);
+
+                appraisalCycleRepository.save(appraisalCycle);
+
+                return ApiResponse.success("Date extended");
         }
 
 }

@@ -15,5 +15,6 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
     List<PerformanceReview> findByReviewerIdAndAppraisalYear(String reviewerId, String appraisalYear);
     List<PerformanceReview> findByCounterSignersIdAndAppraisalYear(String countersignersId, String appraisalYear);
     Optional<PerformanceReview> findByAppraisalYearAndStaffId(String appraisalYear, String staffId);
+    List<PerformanceReview> findByAppraisalYear(String appraisalYear);
 
 }

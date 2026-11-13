@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.northwest.seamless.enumeration.ReviewStatus;
+import com.northwest.seamless.enumeration.Suggestion;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,9 +57,9 @@ public class PerformanceReview {
 
     private LocalDateTime reviewedAt;
 
-    private String reviewerSuggestion;
+    private Suggestion reviewerSuggestion;
 
-    private String counterSignerSuggestion;
+    private Suggestion counterSignerSuggestion;
 
     private String appraisalYear;
 
@@ -68,6 +70,8 @@ public class PerformanceReview {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "appraisal_cycle_id", nullable = false)

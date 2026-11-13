@@ -11,6 +11,5 @@ public class ObjectiveResponse {
     private int staffSelfRating;
     private int reviewerRating;
     private String staffComment;
-    private String reviewerComment;
 
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.AppraisalCycleResponse;
+import com.northwest.seamless.dtos.response.PerformanceManagementDashboardResponse;
 import com.northwest.seamless.dtos.response.PerformanceObjectiveResponse;
 import com.northwest.seamless.service.interfaces.PerformanceService;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,20 @@ public class PerformanceController {
             @RequestParam String staffId,
             @RequestParam String year) {
         return ResponseEntity.ok().body(performanceService.getEmployeePerformanceObjective(staffId, year));
+
+    }
+
+    @GetMapping("/{year}")
+    public ResponseEntity<ApiResponse<List<PerformanceObjectiveResponse>>> getPerformanceObjectivesPerYear(
+            @PathVariable String year) {
+
+        return ResponseEntity.ok().body(performanceService.getPerformanceObjectivesPerYear(year));
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<ApiResponse<PerformanceManagementDashboardResponse>> getPerformanceManagementDashboardInfo(
+            @RequestParam String year) {
+        return ResponseEntity.ok().body(performanceService.getPerformanceManagementDashboardInfo(year));
 
     }
 

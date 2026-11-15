@@ -10,7 +10,7 @@ import com.northwest.seamless.entity.appraisal.PerformanceReview;
 
 @Repository 
 public interface PerformanceReviewRepository extends JpaRepository<PerformanceReview, Integer> {
-    Optional<PerformanceReview> findByIdAndStaffId(int id, String staffId);
+    Optional<PerformanceReview> findById(int id);
     Optional<PerformanceReview> findByIdAndReviewerId(int id, String reviewerId);
     List<PerformanceReview> findByReviewerIdAndAppraisalYear(String reviewerId, String appraisalYear);
     List<PerformanceReview> findByCounterSignersIdAndAppraisalYear(String countersignersId, String appraisalYear);

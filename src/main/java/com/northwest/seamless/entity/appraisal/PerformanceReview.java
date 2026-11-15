@@ -53,6 +53,8 @@ public class PerformanceReview {
     @Enumerated(EnumType.STRING)
     private ReviewStatus status;
 
+    private LocalDateTime approvedAt;
+
     private LocalDateTime submittedAt;
 
     private LocalDateTime reviewedAt;
@@ -72,6 +74,10 @@ public class PerformanceReview {
     private LocalDate endDate;
 
     private String name;
+
+    private String reviewerName;
+
+    private String counterSignerName;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "appraisal_cycle_id", nullable = false)

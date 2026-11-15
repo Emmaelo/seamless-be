@@ -6,10 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.northwest.seamless.dtos.request.ChangeSupervisorRequest;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.AppraisalCycleResponse;
 import com.northwest.seamless.dtos.response.PerformanceManagementDashboardResponse;
@@ -59,6 +63,17 @@ public class PerformanceController {
             @RequestParam String year) {
         return ResponseEntity.ok().body(performanceService.getPerformanceManagementDashboardInfo(year));
 
+    }
+
+    @PostMapping("/edit")
+    public ResponseEntity<ApiResponse<String>> changeSupervisor(@RequestBody ChangeSupervisorRequest request) {
+        return ResponseEntity.ok().body(performanceService.changeSupervisor(request));
+    }
+
+
+    @PostMapping("/approve/{performanceId}") 
+    public ResponseEntity<ApiResponse<String>> approveObjectiveForSupervisor(@PathVariable int performanceId){
+        return ResponseEntity.ok().body(performanceService.approveObjectiveForSupervisor(performanceId));
     }
 
 }

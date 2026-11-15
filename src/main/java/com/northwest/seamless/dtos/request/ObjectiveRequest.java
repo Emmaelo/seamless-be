@@ -8,5 +8,6 @@ import lombok.Data;
 public class ObjectiveRequest {
     private String title;
     private String target;
+    private int weight;
 
 }

@@ -8,6 +8,7 @@ public class ObjectiveResponse {
     private int id;
     private String title;
     private String target;
+    private int weight;
     private int staffSelfRating;
     private int reviewerRating;
     private String staffComment;

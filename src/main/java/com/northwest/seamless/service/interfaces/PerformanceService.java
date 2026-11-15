@@ -3,6 +3,7 @@ package com.northwest.seamless.service.interfaces;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.northwest.seamless.dtos.request.ChangeSupervisorRequest;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.AppraisalCycleResponse;
 import com.northwest.seamless.dtos.response.PerformanceManagementDashboardResponse;
@@ -15,5 +16,7 @@ public interface PerformanceService {
     ApiResponse<PerformanceObjectiveResponse> getEmployeePerformanceObjective(String staffId, String year);
     ApiResponse<List<PerformanceObjectiveResponse>> getPerformanceObjectivesPerYear(String year);
     ApiResponse<PerformanceManagementDashboardResponse> getPerformanceManagementDashboardInfo(String year); 
+    ApiResponse<String> changeSupervisor(ChangeSupervisorRequest request);
+    ApiResponse<String> approveObjectiveForSupervisor(int performanceId);
 
 }

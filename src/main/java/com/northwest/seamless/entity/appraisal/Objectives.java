@@ -29,7 +29,10 @@ public class Objectives {
 
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String target;
+
+    private int weight;
 
     private int staffSelfRating;
 

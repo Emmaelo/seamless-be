@@ -1,21 +1,28 @@
 package com.northwest.seamless.service.implementations;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.northwest.seamless.dtos.request.ChangeSupervisorRequest;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.AppraisalCycleResponse;
 import com.northwest.seamless.dtos.response.PerformanceManagementDashboardResponse;
 import com.northwest.seamless.dtos.response.PerformanceObjectiveResponse;
 import com.northwest.seamless.entity.appraisal.AppraisalCycle;
 import com.northwest.seamless.entity.appraisal.PerformanceReview;
+import com.northwest.seamless.entity.hris.EmployeeEntity;
+import com.northwest.seamless.enumeration.AccessRoles;
 import com.northwest.seamless.enumeration.ReviewStatus;
 import com.northwest.seamless.repository.AppraisalCycleRepository;
+import com.northwest.seamless.repository.EmployeeEntityRepository;
 import com.northwest.seamless.repository.PerformanceReviewRepository;
 import com.northwest.seamless.service.interfaces.PerformanceService;
 
@@ -26,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class PerformanceImpl implements PerformanceService {
     private final AppraisalCycleRepository appraisalCycleRepository;
     private final PerformanceReviewRepository performanceReviewRepository;
+    private final EmployeeEntityRepository employeeEntityRepository;
     private final ModelMapper mapper;
 
     public ApiResponse<List<AppraisalCycleResponse>> getAppraisalList() {
@@ -230,6 +238,62 @@ public class PerformanceImpl implements PerformanceService {
         }
         return ApiResponse.success("success", response);
 
+    }
+
+
+    public ApiResponse<String> changeSupervisor(ChangeSupervisorRequest request){
+        
+        EmployeeEntity supOrSign = employeeEntityRepository.findByStaffId(request.getSupervisorId()).orElse(null);
+
+        if(supOrSign == null){
+            return ApiResponse.error("Employee not found");
+        }
+
+        PerformanceReview performanceReview = performanceReviewRepository.findById(request.getPerformanceId()).orElse(null);
+
+        if (performanceReview == null){
+            return ApiResponse.error("Performance review not found");
+        }
+
+        if(request.getAction().equalsIgnoreCase("supervisor")){
+            performanceReview.setReviewerId(request.getSupervisorId());
+            performanceReview.setReviewerName(supOrSign.getFirstName() + " "+ supOrSign.getLastName());
+        }else{
+            performanceReview.setCounterSignersId(request.getSupervisorId());
+            performanceReview.setCounterSignerName(supOrSign.getFirstName() + " "+ supOrSign.getLastName());
+        }
+
+        if(!supOrSign.getRoles().contains(AccessRoles.SUPERVISOR)){
+            supOrSign.getRoles().add(AccessRoles.SUPERVISOR);
+        }
+
+        employeeEntityRepository.save(supOrSign);
+
+        performanceReviewRepository.save(performanceReview);
+
+        return ApiResponse.success("Change updated successfully");
+    }
+
+
+    public ApiResponse<String> approveObjectiveForSupervisor(int performanceId){
+        
+        PerformanceReview performanceReview = performanceReviewRepository.findById(performanceId).orElse(null);
+
+        if (performanceReview == null){
+            return ApiResponse.error("Performance review not found");
+        }
+
+        if(performanceReview.getStatus() != ReviewStatus.SUBMITTED){
+            return ApiResponse.error("Cannot approve at the moment");
+        }
+
+        performanceReview.setStatus(ReviewStatus.APPROVED);
+        performanceReview.setApprovedAt(LocalDateTime.now());
+
+        performanceReviewRepository.save(performanceReview);
+
+        return ApiResponse.success("Objectives Approved");
+        
     }
 
 }

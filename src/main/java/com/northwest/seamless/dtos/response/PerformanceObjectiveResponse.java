@@ -32,6 +32,7 @@ public class PerformanceObjectiveResponse {
     private LocalDate endDate;
     private String staffId;
     private String name;
+    private int id;
 
     @Builder.Default
     private List<ObjectiveResponse> objectives = new ArrayList<>();

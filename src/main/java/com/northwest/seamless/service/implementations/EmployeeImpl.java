@@ -36,10 +36,9 @@ public class EmployeeImpl implements EmployeeService {
 
     @Transactional
     public ApiResponse<String> createObjectives(List<ObjectiveRequest> requests, int performanceReviewId) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         PerformanceReview review = performanceReviewRepository
-                .findByIdAndStaffId(performanceReviewId, email)
+                .findById(performanceReviewId)
                 .orElseThrow(() -> new ApplicationException("performance review not found"));
 
         for (ObjectiveRequest request : requests) {
@@ -48,6 +47,7 @@ public class EmployeeImpl implements EmployeeService {
                     .title(request.getTitle())
                     .target(request.getTarget())
                     .performanceReview(review)
+                    .weight(request.getWeight())
                     .build();
 
             review.addObjective(objective);
@@ -87,20 +87,8 @@ public class EmployeeImpl implements EmployeeService {
     @Transactional
     public ApiResponse<String> appraiseSelf(SelfRequest request) {
 
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        Optional<EmployeeEntity> employeeEntity = employeeEntityRepository.findByWorkEmail(email);
-
-        if (employeeEntity.isEmpty()) {
-            return ApiResponse.error("User not found");
-        }
-
-        EmployeeEntity employee = employeeEntity.get();
-
         PerformanceReview pReview = performanceReviewRepository
-                .findByIdAndStaffId(request.getPerformanceReviewId(), employee.getStaffId()).orElse(null);
+                .findById(request.getPerformanceReviewId()).orElse(null);
 
         if (pReview == null) {
             return ApiResponse.error("Performance review not found");

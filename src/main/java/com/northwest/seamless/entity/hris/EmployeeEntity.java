@@ -99,6 +99,8 @@ public class EmployeeEntity {
     private String managerId;
     private String managerName;
 
+    private String reasonForDeactivation;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "kys_entity_staff_id")
     private KYSEntity kysEntity;

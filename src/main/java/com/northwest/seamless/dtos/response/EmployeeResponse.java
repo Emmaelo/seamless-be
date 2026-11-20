@@ -1,5 +1,6 @@
 package com.northwest.seamless.dtos.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import lombok.Data;
@@ -16,5 +17,11 @@ public class EmployeeResponse {
     private String department;
     private String location;
     private String staffId;
+    private String reasonForDeactivation;
+    private String phoneNumber;
+    private String personalEmail;
+    private String payGroup;
+    private String payGrade;
+    private BigDecimal grossSalary;
 
 }

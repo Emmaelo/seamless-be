@@ -20,10 +20,12 @@ import com.northwest.seamless.dtos.response.EmployeeResponse;
 import com.northwest.seamless.entity.hris.Departments;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
 import com.northwest.seamless.entity.hris.PayGrades;
+import com.northwest.seamless.entity.hris.PublicHolidays;
 import com.northwest.seamless.exceptions.ApplicationException;
 import com.northwest.seamless.repository.DepartmentRepository;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
 import com.northwest.seamless.repository.PayGradesRepository;
+import com.northwest.seamless.repository.PublicHolidayRepository;
 import com.northwest.seamless.service.interfaces.OtherService;
 import com.northwest.seamless.utils.EmployeeSpecification;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class OtherImpl implements OtherService {
     private final EmployeeEntityRepository employeeEntityRepository;
     private final DepartmentRepository departmentRepository;
     private final PayGradesRepository payGradesRepository;
+    private final PublicHolidayRepository publicHolidayRepository;
 
     public ApiResponse<List<EmployeeResponse>> findEmployeeDetails(boolean isActive) {
 
@@ -63,6 +66,12 @@ public class OtherImpl implements OtherService {
             response.setLocation(em.getLocation());
             response.setStaffId(em.getStaffId());
             response.setWorkAnniversary(formatWorkAnniversary(em.getDateOfEmployment()));
+            response.setReasonForDeactivation(em.getReasonForDeactivation());
+            response.setPhoneNumber(em.getPhoneNumber());
+            response.setPersonalEmail(em.getPersonalEmail());
+            response.setPayGroup(em.getSalaryEntity().getPayGroup());
+            response.setPayGrade(em.getSalaryEntity().getPayGrade());
+            response.setGrossSalary(em.getSalaryEntity().getGrossSalary());
 
             listOfResponse.add(response);
         }
@@ -257,5 +266,12 @@ public class OtherImpl implements OtherService {
         List<PayGrades> listOfpPayGrades = payGradesRepository.findAll(Sort.by("payGrade").ascending());
         return ApiResponse.success("success", listOfpPayGrades);
     }
+
+
+    public ApiResponse<List<PublicHolidays>> getPublicHolidays(){
+        
+        return ApiResponse.success("success", publicHolidayRepository.findByExpired(false));
+    }
+
 
 }

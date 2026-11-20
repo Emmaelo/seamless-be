@@ -49,12 +49,12 @@ public class SupervisorsImpl implements SupervisorService {
 
         List<PerformanceReview> performanceReviews;
 
-        if ("manager".equalsIgnoreCase(role)) {
-            performanceReviews = performanceReviewRepository
-                    .findByCounterSignersIdAndAppraisalYear(employee.getStaffId(), year);
-        } else {
+        if ("reviewer".equalsIgnoreCase(role)) {
             performanceReviews = performanceReviewRepository.findByReviewerIdAndAppraisalYear(employee.getStaffId(),
                     year);
+        } else {
+            performanceReviews = performanceReviewRepository
+                    .findByCounterSignersIdAndAppraisalYear(employee.getStaffId(), year);
         }
 
         List<PerformanceReviewResponse> pResponses = new ArrayList<>();
@@ -84,7 +84,6 @@ public class SupervisorsImpl implements SupervisorService {
 
     }
 
-
     // for line manager
     public ApiResponse<String> rejectObective(int performanceReviewId) {
         Optional<PerformanceReview> performanceReview = performanceReviewRepository.findById(performanceReviewId);
@@ -103,8 +102,7 @@ public class SupervisorsImpl implements SupervisorService {
 
     }
 
-
-    @Transactional 
+    @Transactional
     public ApiResponse<String> appraiseStaff(ReviewerRequest request) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -118,7 +116,7 @@ public class SupervisorsImpl implements SupervisorService {
         PerformanceReview performanceReview = performanceReviewRepository
                 .findByIdAndReviewerId(request.getPerformanceReviewId(), employeeEntity.getStaffId()).orElse(null);
 
-        if(performanceReview == null){
+        if (performanceReview == null) {
             return ApiResponse.error("Performance Review not found");
         }
 
@@ -172,7 +170,7 @@ public class SupervisorsImpl implements SupervisorService {
             Objectives objective = objectiveMap.get(rq.getObjectiveId());
 
             objective.setReviewerRating(rq.getReviewerRating());
-            
+
         }
 
         performanceReview.setStatus(ReviewStatus.REVIEWED);
@@ -187,23 +185,20 @@ public class SupervisorsImpl implements SupervisorService {
 
     }
 
-
-
-
-    public ApiResponse<String> counterSign(CounterSignRequest request){
+    public ApiResponse<String> counterSign(CounterSignRequest request) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-          EmployeeEntity employeeEntity = employeeEntityRepository.findByWorkEmail(email).orElse(null);
+        EmployeeEntity employeeEntity = employeeEntityRepository.findByWorkEmail(email).orElse(null);
 
         if (employeeEntity == null) {
             return ApiResponse.error("User not found");
         }
 
-          PerformanceReview performanceReview = performanceReviewRepository
+        PerformanceReview performanceReview = performanceReviewRepository
                 .findByIdAndReviewerId(request.getPerformanceReviewId(), employeeEntity.getStaffId()).orElse(null);
 
-        if(performanceReview == null){
+        if (performanceReview == null) {
             return ApiResponse.error("Performance Review not found");
         }
 
@@ -222,7 +217,5 @@ public class SupervisorsImpl implements SupervisorService {
                 "Counter signed successfully");
 
     }
-
-    
 
 }

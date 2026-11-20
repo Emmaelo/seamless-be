@@ -4,9 +4,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.northwest.seamless.dtos.request.ActivateDeactivateRequest;
+import com.northwest.seamless.dtos.request.HolidayRequest;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.HRISOverviewResponse;
 import com.northwest.seamless.service.interfaces.HRISService;
@@ -26,11 +29,22 @@ public class HRISController {
 
     }
 
-    @PatchMapping("/employees/{action}/{staffId}")
-    public ResponseEntity<ApiResponse<String>> activateDeactivateEmployee(@PathVariable String action,
-            @PathVariable String staffId) {
-                return ResponseEntity.ok().body(hrisService.activateDeactivateEmployee(action, staffId));
+    @PatchMapping("/employees/action")
+    public ResponseEntity<ApiResponse<String>> activateDeactivateEmployee(
+            @RequestBody ActivateDeactivateRequest request) {
+        return ResponseEntity.ok().body(hrisService.activateDeactivateEmployee(request));
 
+    }
+
+    @PostMapping("/access/{staffId}/{action}")
+    public ResponseEntity<ApiResponse<String>> makeAdminOrSupervisor(@PathVariable String staffId,
+            @PathVariable String action) {
+        return ResponseEntity.ok().body(hrisService.makeAdminOrSupervisor(staffId, action));
+    }
+
+    @PostMapping("/create-holiday")
+    public ResponseEntity<ApiResponse<String>> createPublicHoliday(@RequestBody HolidayRequest request) {
+        return ResponseEntity.ok().body(hrisService.createPublicHoliday(request));
     }
 
 }

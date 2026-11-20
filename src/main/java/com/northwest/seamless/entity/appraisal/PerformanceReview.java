@@ -87,6 +87,11 @@ public class PerformanceReview {
     @Builder.Default
     private List<Objectives> objectives = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "performanceReview", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<BehaviouralAssessment> assessments = new ArrayList<>();
+
     public void addObjective(Objectives objective) {
         objectives.add(objective);
         objective.setPerformanceReview(this);

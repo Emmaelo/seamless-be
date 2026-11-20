@@ -11,6 +11,7 @@ import com.northwest.seamless.dtos.response.CelebrationResponse;
 import com.northwest.seamless.dtos.response.EmployeeResponse;
 import com.northwest.seamless.entity.hris.Departments;
 import com.northwest.seamless.entity.hris.PayGrades;
+import com.northwest.seamless.entity.hris.PublicHolidays;
 import com.northwest.seamless.service.interfaces.OtherService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,11 @@ public class OtherController {
     @GetMapping("/pay-grades")
     public ResponseEntity<ApiResponse<List<PayGrades>>> getPayGrades() {
         return ResponseEntity.ok().body(otherService.getPayGrades());
+    }
+
+    @GetMapping ("/holidays")
+    public ResponseEntity<ApiResponse<List<PublicHolidays>>> getPublicHolidays(){
+        return ResponseEntity.ok().body(otherService.getPublicHolidays());
     }
 
 }

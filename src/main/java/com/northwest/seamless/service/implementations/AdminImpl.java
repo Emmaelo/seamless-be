@@ -247,11 +247,11 @@ public class AdminImpl implements AdminService {
                         return ApiResponse.error("Appraisal year not found");
                 }
 
-                if(!appraisalCycle.isActive()){
+                if (!appraisalCycle.isActive()) {
                         return ApiResponse.error("Appraisal ended. Cannot modify");
                 }
 
-                for(PerformanceReview pr : appraisalCycle.getPerformanceReviews()){
+                for (PerformanceReview pr : appraisalCycle.getPerformanceReviews()) {
                         pr.setEndDate(endDate);
                 }
 
@@ -261,5 +261,17 @@ public class AdminImpl implements AdminService {
 
                 return ApiResponse.success("Date extended");
         }
+
+        // public ApiResponse<String> duplicateObjectiveForEmployee(int performanceId, String year) {
+
+        //         PerformanceReview pReview = performanceReviewRepository.findById(performanceId).orElse(null);
+
+        //         if(pReview == null){
+        //                 return ApiResponse.error("Performance review not found for this user");
+        //         }
+
+
+
+        // }
 
 }

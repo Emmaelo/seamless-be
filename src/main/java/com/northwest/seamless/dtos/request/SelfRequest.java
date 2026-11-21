@@ -9,5 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SelfRequest {
     private List<SelfAppraisalRequest> selfAppraisalRequests;
+    private List<BehavioralRequest> behavioralRequests;
     private int performanceReviewId;
 }

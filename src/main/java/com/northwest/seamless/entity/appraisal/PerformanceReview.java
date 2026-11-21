@@ -1,5 +1,6 @@
 package com.northwest.seamless.entity.appraisal;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,8 +45,10 @@ public class PerformanceReview {
 
     private String counterSignersId;
 
+    @Column(columnDefinition = "TEXT")
     private String counterSignersComment;
 
+    @Column(columnDefinition = "TEXT")
     private String reviewerComment;
 
     private LocalDateTime counterSignedAt;
@@ -59,15 +62,17 @@ public class PerformanceReview {
 
     private LocalDateTime reviewedAt;
 
+    @Enumerated(EnumType.STRING) 
     private Suggestion reviewerSuggestion;
 
+    @Enumerated (EnumType.STRING)
     private Suggestion counterSignerSuggestion;
 
     private String appraisalYear;
 
-    private int employeeFinalScore;
+    
 
-    private int supervisorFinalScore;
+    
 
     private LocalDate startDate;
 
@@ -78,6 +83,21 @@ public class PerformanceReview {
     private String reviewerName;
 
     private String counterSignerName;
+
+ 
+private int employeeObjectiveScore;
+private int employeeBehaviouralScore;
+private int employeeFinalScore;
+
+
+
+
+private int supervisorObjectiveScore;
+
+private int supervisorBehaviouralScore;
+private int supervisorFinalScore;
+
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "appraisal_cycle_id", nullable = false)
@@ -95,6 +115,11 @@ public class PerformanceReview {
     public void addObjective(Objectives objective) {
         objectives.add(objective);
         objective.setPerformanceReview(this);
+    }
+
+    public void addBehaviourAssessment(BehaviouralAssessment assessment){
+        assessments.add(assessment);
+        assessment.setPerformanceReview(this);
     }
 
 }

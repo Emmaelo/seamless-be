@@ -8,6 +8,4 @@ import lombok.Data;
 public class SelfAppraisalRequest {
     private int objectiveId;
     private int staffSelfRating;
-    private String staffComment;
-
 }

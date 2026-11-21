@@ -1,16 +1,20 @@
 package com.northwest.seamless.dtos.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data 
 @Builder 
+@NoArgsConstructor 
+@AllArgsConstructor 
 public class BehaviouralResponse {
     private int id;
     private String coreValue;
     private int weight;
-    private String selfRating;
-    private String reviewerRating;
+    private int selfRating;
+    private int reviewerRating;
     private String staffId;
     private String year;
 

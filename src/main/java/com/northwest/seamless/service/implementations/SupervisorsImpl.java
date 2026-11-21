@@ -12,12 +12,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.northwest.seamless.dtos.request.CounterSignRequest;
 import com.northwest.seamless.dtos.request.ReviewerAppraisalRequest;
+import com.northwest.seamless.dtos.request.ReviewerBehavioralRequest;
 import com.northwest.seamless.dtos.request.ReviewerRequest;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.PerformanceReviewResponse;
+import com.northwest.seamless.entity.appraisal.BehaviouralAssessment;
 import com.northwest.seamless.entity.appraisal.Objectives;
 import com.northwest.seamless.entity.appraisal.PerformanceReview;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
@@ -26,6 +27,7 @@ import com.northwest.seamless.enumeration.Suggestion;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
 import com.northwest.seamless.repository.PerformanceReviewRepository;
 import com.northwest.seamless.service.interfaces.SupervisorService;
+import com.northwest.seamless.utils.Utils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -76,6 +78,10 @@ public class SupervisorsImpl implements SupervisorService {
 
         PerformanceReview pr = performanceReview.get();
 
+        if (pr.getStatus() != ReviewStatus.SUBMITTED) {
+            return ApiResponse.error("You cannot approve the objective at the moment");
+        }
+
         pr.setStatus(ReviewStatus.APPROVED);
 
         performanceReviewRepository.save(pr);
@@ -93,6 +99,10 @@ public class SupervisorsImpl implements SupervisorService {
         }
 
         PerformanceReview pr = performanceReview.get();
+
+        if (pr.getStatus() != ReviewStatus.SUBMITTED) {
+            return ApiResponse.error("You cannot reject the objective at the moment");
+        }
 
         pr.setStatus(ReviewStatus.REJECTED);
 
@@ -164,6 +174,9 @@ public class SupervisorsImpl implements SupervisorService {
                     "Please provide ratings for all objectives");
         }
 
+        double objectiveScore = 0.0;
+        double behavioralScore = 0.0;
+
         // STEP 2: Update objectives only after all validations pass
         for (ReviewerAppraisalRequest rq : request.getReviewerAppraisalRequest()) {
 
@@ -171,12 +184,44 @@ public class SupervisorsImpl implements SupervisorService {
 
             objective.setReviewerRating(rq.getReviewerRating());
 
+            double score = Utils.calculatescore(rq.getReviewerRating(), objective.getWeight(), 5);
+
+            objectiveScore += score;
+
         }
+
+        List<BehaviouralAssessment> assessments = performanceReview.getAssessments();
+
+        for (ReviewerBehavioralRequest req : request.getBehavioralRequests()) {
+
+            BehaviouralAssessment assessment = assessments.stream()
+                    .filter(a -> a.getId() == req.getId())
+                    .findFirst()
+                    .orElse(null);
+
+            if (assessment == null) {
+                return ApiResponse.error(
+                        "Invalid behavioural assessment ID: " + req.getId());
+            }
+
+            int maxRating = getBehaviourRating(assessment.getCoreValue());
+
+            double score = Utils.calculatescore(req.getRating(), assessment.getWeight(), maxRating);
+
+            assessment.setReviewerRating(req.getRating());
+            behavioralScore += score;
+
+        }
+
+        int finalScore = Utils.calculateFinalScore(objectiveScore, behavioralScore);
 
         performanceReview.setStatus(ReviewStatus.REVIEWED);
         performanceReview.setReviewerComment(request.getReviewerComment());
         performanceReview.setReviewedAt(LocalDateTime.now());
-        performanceReview.setReviewerSuggestion(Suggestion.valueOf(request.getSuggestion()));
+        performanceReview.setReviewerSuggestion(Suggestion.valueOf(request.getSuggestion().toUpperCase()));
+        performanceReview.setSupervisorObjectiveScore((int) Math.round(objectiveScore));
+        performanceReview.setSupervisorBehaviouralScore((int) Math.round(behavioralScore));
+        performanceReview.setSupervisorFinalScore(finalScore);
 
         performanceReviewRepository.save(performanceReview);
 
@@ -215,6 +260,16 @@ public class SupervisorsImpl implements SupervisorService {
 
         return ApiResponse.success(
                 "Counter signed successfully");
+
+    }
+
+    private int getBehaviourRating(String behavior) {
+
+        if (behavior.equalsIgnoreCase("Integrity")) {
+            return 2;
+
+        }
+        return 5;
 
     }
 

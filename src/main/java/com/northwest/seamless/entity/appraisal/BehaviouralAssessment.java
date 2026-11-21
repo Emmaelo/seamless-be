@@ -25,8 +25,8 @@ public class BehaviouralAssessment {
     private int id;
     private String coreValue;
     private int weight;
-    private String selfRating;
-    private String reviewerRating;
+    private int selfRating;
+    private int reviewerRating;
     private String staffId;
     private String year;
     

@@ -11,11 +11,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.northwest.seamless.dtos.request.BehavioralRequest;
 import com.northwest.seamless.dtos.request.ObjectiveRequest;
 import com.northwest.seamless.dtos.request.SelfAppraisalRequest;
 import com.northwest.seamless.dtos.request.SelfRequest;
 import com.northwest.seamless.dtos.response.ApiResponse;
 import com.northwest.seamless.dtos.response.PerformanceReviewResponse;
+import com.northwest.seamless.entity.appraisal.BehaviouralAssessment;
 import com.northwest.seamless.entity.appraisal.Objectives;
 import com.northwest.seamless.entity.appraisal.PerformanceReview;
 import com.northwest.seamless.entity.hris.EmployeeEntity;
@@ -24,6 +27,7 @@ import com.northwest.seamless.exceptions.ApplicationException;
 import com.northwest.seamless.repository.EmployeeEntityRepository;
 import com.northwest.seamless.repository.PerformanceReviewRepository;
 import com.northwest.seamless.service.interfaces.EmployeeService;
+import com.northwest.seamless.utils.Utils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -138,16 +142,49 @@ public class EmployeeImpl implements EmployeeService {
                     "Please provide ratings for all objectives");
         }
 
+        if (request.getBehavioralRequests().size() != 7) {
+            return ApiResponse.error("7 core values must be submitted");
+        }
+
+        double objectiveScore = 0.0;
+        double behavioralScore = 0.0;
+
         // STEP 2: Update objectives only after all validations pass
         for (SelfAppraisalRequest rq : request.getSelfAppraisalRequests()) {
 
             Objectives objective = objectiveMap.get(rq.getObjectiveId());
 
             objective.setStaffSelfRating(rq.getStaffSelfRating());
-            objective.setStaffComment(rq.getStaffComment());
+
+            double score = Utils.calculatescore(rq.getStaffSelfRating(), objective.getWeight(), 5);
+
+            objectiveScore = objectiveScore + score;
+        }
+
+        for (BehavioralRequest req : request.getBehavioralRequests()) {
+
+            BehaviouralAssessment assessment = new BehaviouralAssessment();
+            assessment.setCoreValue(req.getCoreValue());
+            assessment.setWeight(req.getWeight());
+            assessment.setSelfRating(req.getRating());
+            assessment.setYear(pReview.getAppraisalYear());
+            assessment.setStaffId(pReview.getStaffId());
+
+            double score = Utils.calculatescore(req.getRating(), req.getWeight(),
+                    getBehaviourRating(req.getCoreValue()));
+
+            behavioralScore = behavioralScore + score;
+
+            pReview.addBehaviourAssessment(assessment);
 
         }
+
+        int finalScore = Utils.calculateFinalScore(objectiveScore, behavioralScore);
+
         pReview.setStatus(ReviewStatus.SELF_APPRAISED);
+        pReview.setEmployeeObjectiveScore((int) Math.round(objectiveScore));
+        pReview.setEmployeeBehaviouralScore((int) Math.round(behavioralScore));
+        pReview.setEmployeeFinalScore(finalScore);
 
         performanceReviewRepository.save(pReview);
 
@@ -155,5 +192,14 @@ public class EmployeeImpl implements EmployeeService {
                 "Self-appraisal submitted successfully");
     }
 
-    
+    private int getBehaviourRating(String behavior) {
+
+        if (behavior.equalsIgnoreCase("Integrity")) {
+            return 2;
+
+        }
+        return 5;
+
+    }
+
 }

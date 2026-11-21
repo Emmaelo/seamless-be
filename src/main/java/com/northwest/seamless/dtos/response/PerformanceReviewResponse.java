@@ -10,8 +10,9 @@ import lombok.Data;
 @Data
 public class PerformanceReviewResponse {
 
+    private int id;
     private String counterSignersComment;
-     private ReviewStatus status;
+    private ReviewStatus status;
     private String name;
     private String staffId;
     private String reviewerComment;
